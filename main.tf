@@ -1,9 +1,23 @@
-resource "aci_rest" "fvTenant" {
-  dn         = "uni/tn-${var.name}"
-  class_name = "fvTenant"
+resource "aci_rest" "fabricSpNodePGrp" {
+  dn         = "uni/fabric/funcprof/spnodepgrp-${var.name}"
+  class_name = "fabricSpNodePGrp"
   content = {
-    name      = var.name
-    nameAlias = var.alias
-    descr     = var.description
+    name = var.name
+  }
+}
+
+resource "aci_rest" "fabricRsPsuInstPol" {
+  dn         = "${aci_rest.fabricSpNodePGrp.id}/rspsuInstPol"
+  class_name = "fabricRsPsuInstPol"
+  content = {
+    tnPsuInstPolName = var.psu_policy
+  }
+}
+
+resource "aci_rest" "fabricRsNodeCtrl" {
+  dn         = "${aci_rest.fabricSpNodePGrp.id}/rsnodeCtrl"
+  class_name = "fabricRsNodeCtrl"
+  content = {
+    tnFabricNodeControlName = var.node_control_policy
   }
 }
