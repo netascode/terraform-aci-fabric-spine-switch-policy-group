@@ -5,8 +5,8 @@ terraform {
     }
 
     aci = {
-      source  = "netascode/aci"
-      version = ">=0.2.0"
+      source  = "CiscoDevNet/aci"
+      version = ">=2.0.0"
     }
   }
 }
@@ -19,7 +19,7 @@ module "main" {
   node_control_policy = "NC1"
 }
 
-data "aci_rest" "fabricSpNodePGrp" {
+data "aci_rest_managed" "fabricSpNodePGrp" {
   dn = "uni/fabric/funcprof/spnodepgrp-${module.main.name}"
 
   depends_on = [module.main]
@@ -30,13 +30,13 @@ resource "test_assertions" "fabricSpNodePGrp" {
 
   equal "name" {
     description = "name"
-    got         = data.aci_rest.fabricSpNodePGrp.content.name
+    got         = data.aci_rest_managed.fabricSpNodePGrp.content.name
     want        = module.main.name
   }
 }
 
-data "aci_rest" "fabricRsPsuInstPol" {
-  dn = "${data.aci_rest.fabricSpNodePGrp.id}/rspsuInstPol"
+data "aci_rest_managed" "fabricRsPsuInstPol" {
+  dn = "${data.aci_rest_managed.fabricSpNodePGrp.id}/rspsuInstPol"
 
   depends_on = [module.main]
 }
@@ -46,13 +46,13 @@ resource "test_assertions" "fabricRsPsuInstPol" {
 
   equal "tnPsuInstPolName" {
     description = "tnPsuInstPolName"
-    got         = data.aci_rest.fabricRsPsuInstPol.content.tnPsuInstPolName
+    got         = data.aci_rest_managed.fabricRsPsuInstPol.content.tnPsuInstPolName
     want        = "PSU1"
   }
 }
 
-data "aci_rest" "fabricRsNodeCtrl" {
-  dn = "${data.aci_rest.fabricSpNodePGrp.id}/rsnodeCtrl"
+data "aci_rest_managed" "fabricRsNodeCtrl" {
+  dn = "${data.aci_rest_managed.fabricSpNodePGrp.id}/rsnodeCtrl"
 
   depends_on = [module.main]
 }
@@ -62,7 +62,7 @@ resource "test_assertions" "fabricRsNodeCtrl" {
 
   equal "tnFabricNodeControlName" {
     description = "tnFabricNodeControlName"
-    got         = data.aci_rest.fabricRsNodeCtrl.content.tnFabricNodeControlName
+    got         = data.aci_rest_managed.fabricRsNodeCtrl.content.tnFabricNodeControlName
     want        = "NC1"
   }
 }
